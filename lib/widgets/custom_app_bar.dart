@@ -5,24 +5,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final List<Widget>? actions;
 
-  CustomAppBar({
-    required this.title,
-    this.leading,
-    this.actions,
-  });
+  const CustomAppBar({required this.title, this.leading, this.actions});
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent, // Transparent for background image or color
+      backgroundColor: Colors.transparent, // Transparent background for the AppBar
       elevation: 0, // No shadow
       title: Row(
         children: [
-          // Left side content with background, icon, and text
           Container(
             padding: EdgeInsets.all(8.0),
             decoration: BoxDecoration(
-              color: Colors.blue, // Background color
+              color: Colors.blue, // Background color for the left side
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
