@@ -10,35 +10,46 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent, // Transparent background for the AppBar
-      elevation: 0, // No shadow
-      title: Row(
-        children: [
-          Container(
-            padding: EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              color: Colors.blue, // Background color for the left side
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.home, color: Colors.white), // Icon on the left
-                SizedBox(width: 8), // Spacer
-                Text(
-                  title,
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      leadingWidth: 100,
+      leading: GestureDetector(
+        onTap: () {
+          // Leading action
+        },
+        child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 3, sigmaY: 2),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  color: Colors.white.withOpacity(0.2), // Semi-transparent background
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.lock, color: Colors.white, size: 15),
+                      SizedBox(width: 4),
+                      Text(
+                        "Upgrade",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-          Spacer(), // Adds space between the left content and the search icon
-        ],
+              ),
+            )
+        ),
       ),
       actions: [
         IconButton(
-          icon: Icon(Icons.search),
+          icon: const Icon(Icons.search, color: Colors.white),
           onPressed: () {
-            // Handle search action
+            // Search action
           },
         ),
       ],

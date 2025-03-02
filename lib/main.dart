@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sleep_soundscape_app/screens/sound_selection_screen.dart';
+import 'package:sleep_soundscape_app/screens/sound_selection/sound_selection_screen.dart';
 
 void main() {
   runApp(
