@@ -1,15 +1,32 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sleep_soundscape_app/core/assets.dart';
 import 'package:sleep_soundscape_app/screens/sound_selection/sound_filter_row.dart';
 import 'package:sleep_soundscape_app/widgets/custom_app_bar.dart';
-
 import '../../model/sound_item.dart';
 import '../../providers/sound_provider.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/sound_grid.dart';
+
+final List<SoundItem> allSoundItems = [
+  SoundItem(name: "Typhoon", iconPath: Assets.iconTyphoon, isLocked: false, category: "Wind"),
+  SoundItem(name: "Sleet", iconPath: Assets.iconSleet, isLocked: false, category: "Rain"),
+  SoundItem(name: "Heavenly Drift", iconPath: "", isLocked: false, category: "Wind"),
+  SoundItem(name: "Snowy Winter", iconPath: Assets.iconSnowyWinter, isLocked: false, category: ""),
+  SoundItem(name: "Cloudiness", iconPath: "", isLocked: false, category: "Rain"),
+  SoundItem(name: "Desert Wind", iconPath: Assets.iconDesertWind, isLocked: false, category: "Wind"),
+  SoundItem(name: "Starry Nights", iconPath: Assets.iconStarryNight, isLocked: false, category: ""),
+  SoundItem(name: "Tribal Drums", iconPath: Assets.iconTribalDrums, isLocked: false, category: ""),
+  SoundItem(name: "Light Rain ", iconPath: "", isLocked: true, category: "Rain"),
+  SoundItem(name: "Wind", iconPath: "", isLocked: true, category: "Wind"),
+  SoundItem(name: "Thunder", iconPath: "", isLocked: true, category: "Rain"),
+  SoundItem(name: "Tornado", iconPath: "", isLocked: true, category: "Wind"),
+  SoundItem(name: "Medium Rain", iconPath: "", isLocked: true, category: ""),
+  SoundItem(name: "Snowy Breeze", iconPath: "", isLocked: true, category: "Wind"),
+  SoundItem(name: "Heavy Rain", iconPath: "", isLocked: true, category: "Rain"),
+  SoundItem(name: "Wind", iconPath: "", isLocked: true, category: "Wind"),
+];
 
 class SoundSelectionScreen extends ConsumerStatefulWidget {
   const SoundSelectionScreen({super.key});
@@ -21,6 +38,7 @@ class SoundSelectionScreen extends ConsumerStatefulWidget {
 class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
   int _selectedIndex = 2;
 
+
   void _onNavBarTap(int index) {
     setState(() {
       _selectedIndex = index;
@@ -31,6 +49,13 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
   Widget build(BuildContext context) {
     final soundState = ref.watch(soundProvider);
     final soundNotifier = ref.read(soundProvider.notifier);
+
+    final filteredItems = soundState.selectedCategory == "All"
+        ? allSoundItems
+        : allSoundItems
+        .where((item) => item.category == soundState.selectedCategory)
+        .toList();
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
@@ -119,24 +144,7 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                     children: [
                       const SizedBox(height: 20,),
                       const SoundFilterRow(),
-                      Expanded(child: SoundGrid(items: [
-                        SoundItem(name: "Typhoon", iconPath: Assets.iconTyphoon, isLocked: false),
-                        SoundItem(name: "Sleet", iconPath: Assets.iconSleet, isLocked: false),
-                        SoundItem(name: "Heavenly Drift", iconPath: "", isLocked: false),
-                        SoundItem(name: "Snowy Winter", iconPath: Assets.iconSnowyWinter, isLocked: false),
-                        SoundItem(name: "Cloudiness", iconPath: "", isLocked: false),
-                        SoundItem(name: "Desert Wind", iconPath: Assets.iconDesertWind, isLocked: false),
-                        SoundItem(name: "Starry Nights", iconPath: Assets.iconStarryNight, isLocked: false),
-                        SoundItem(name: "Tribal Drums", iconPath: Assets.iconTribalDrums, isLocked: false),
-                        SoundItem(name: "Light Rain ", iconPath: "", isLocked: true),
-                        SoundItem(name: "Wind", iconPath: "", isLocked: true),
-                        SoundItem(name: "Thunder", iconPath: "", isLocked: true),
-                        SoundItem(name: "Tornado", iconPath: "", isLocked: true),
-                        SoundItem(name: "Medium Rain", iconPath: "", isLocked: true),
-                        SoundItem(name: "Snowy Breeze", iconPath: "", isLocked: true),
-                        SoundItem(name: "Heavy Rain", iconPath: "", isLocked: true),
-                        SoundItem(name: "Wind", iconPath: "", isLocked: true),
-                      ])),
+                      Expanded(child: SoundGrid(items: filteredItems)),
                     ],
                   )
                       : Center(
