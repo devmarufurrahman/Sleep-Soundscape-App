@@ -37,29 +37,70 @@ class SoundSelectionScreen extends ConsumerStatefulWidget {
 
 class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
   int _selectedIndex = 2;
-
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = "";
 
   void _onNavBarTap(int index) {
     setState(() {
       _selectedIndex = index;
     });
-
   }
+
+  List<SoundItem> _getFilteredItems(String selectedCategory) {
+    List<SoundItem> filtered = allSoundItems;
+    if (selectedCategory != "All") {
+      filtered = filtered
+          .where((item) =>
+      item.category.toLowerCase() == selectedCategory.toLowerCase())
+          .toList();
+    }
+    if (_searchText.isNotEmpty) {
+      filtered = filtered
+          .where((item) =>
+          item.name.toLowerCase().contains(_searchText.toLowerCase()))
+          .toList();
+    }
+    return filtered;
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final soundState = ref.watch(soundProvider);
     final soundNotifier = ref.read(soundProvider.notifier);
-
-    final filteredItems = soundState.selectedCategory == "All"
-        ? allSoundItems
-        : allSoundItems
-        .where((item) => item.category == soundState.selectedCategory)
-        .toList();
+    final filteredItems = _getFilteredItems(soundState.selectedCategory);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      appBar: CustomAppBar(title: ''),
+      appBar: CustomAppBar(
+        title: "",
+        isSearching: _isSearching,
+        searchController: _searchController,
+        onSearchTap: () {
+          setState(() {
+            _isSearching = true;
+          });
+        },
+        onCloseSearch: () {
+          setState(() {
+            _isSearching = false;
+            _searchText = "";
+            _searchController.clear();
+          });
+        },
+        onSearchTextChanged: (value) {
+          setState(() {
+            _searchText = value;
+          });
+        },
+      ),
       body:  Stack(
         children: [
           Container(
@@ -77,7 +118,6 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                   padding: const EdgeInsets.only(top: 140, left: 20, right: 20),
                   child: Row(
                     children: [
-                      // Sounds Button
                       Expanded(
                         child: InkWell(
                           onTap: () => soundNotifier.changeTab(0),
@@ -106,7 +146,6 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      // Saved Button
                       Expanded(
                         child: InkWell(
                           onTap: () => soundNotifier.changeTab(1),
