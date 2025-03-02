@@ -6,6 +6,7 @@ import 'package:sleep_soundscape_app/core/assets.dart';
 import 'package:sleep_soundscape_app/screens/sound_selection/sound_filter_row.dart';
 import 'package:sleep_soundscape_app/widgets/custom_app_bar.dart';
 
+import '../../model/sound_item.dart';
 import '../../providers/sound_provider.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/sound_grid.dart';
@@ -115,10 +116,17 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                 Expanded(
                   child: soundState.selectedTab == 0
                       ? Column(
-                    children: const [
-                      SizedBox(height: 20,),
-                      SoundFilterRow(),
-                      Expanded(child: SoundGrid()), // Grid
+                    children: [
+                      const SizedBox(height: 20,),
+                      const SoundFilterRow(),
+                      Expanded(child: SoundGrid(items: [
+                        SoundItem(name: "Typhoon", iconPath: "assets/icons/home.png", isLocked: false),
+                        SoundItem(name: "Sleet", iconPath: "assets/icons/sleet.png", isLocked: false),
+                        SoundItem(name: "Heavenly Drift", iconPath: "assets/icons/drift.png", isLocked: true),
+                        SoundItem(name: "Snowy Winter", iconPath: "assets/icons/snow.png", isLocked: false),
+                        SoundItem(name: "Wind", iconPath: "assets/icons/wind.png", isLocked: false),
+                        SoundItem(name: "Tornado", iconPath: "assets/icons/tornado.png", isLocked: true),
+                      ])),
                     ],
                   )
                       : Center(
