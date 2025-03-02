@@ -43,7 +43,14 @@ class SoundTile extends StatelessWidget {
                   gradient: _getGradientForSound(item.name),
                 ),
                 child: Center(
-                  child: _getIconForSound(item.name),
+                  child: item.iconPath.isNotEmpty
+                      ? ImageIcon(
+                    AssetImage(item.iconPath),
+                    size: 24,
+                    color: Colors.white,
+                  )
+                      : const SizedBox.shrink(),
+
                 ),
               ),
 
@@ -83,64 +90,6 @@ class SoundTile extends StatelessWidget {
       ],
     );
   }
-
-  Widget _getIconForSound(String soundName) {
-    IconData iconData;
-    Color iconColor = Colors.white.withOpacity(0.8);
-    double size = 28;
-
-    switch (soundName.toLowerCase()) {
-      case 'typhoon':
-        iconData = Icons.cyclone;
-        break;
-      case 'heavenly drift':
-        iconData = Icons.cloud;
-        iconColor = Colors.white;
-        break;
-      case 'cloudiness':
-        iconData = Icons.cloud_outlined;
-        break;
-      case 'desert wind':
-        iconData = Icons.air;
-        break;
-      case 'starry nights':
-        iconData = Icons.star;
-        break;
-      case 'tribal drums':
-        iconData = Icons.music_note;
-        break;
-      case 'light rain':
-        iconData = Icons.water_drop_outlined;
-        break;
-      case 'wind':
-        iconData = Icons.air_outlined;
-        break;
-      case 'thunder':
-        iconData = Icons.flash_on;
-        break;
-      case 'tornado':
-        iconData = Icons.tornado;
-        break;
-      case 'medium rain':
-        iconData = Icons.water_drop;
-        break;
-      case 'snowy breeze':
-        iconData = Icons.ac_unit;
-        break;
-      case 'heavy rain':
-        iconData = Icons.water;
-        break;
-      default:
-        iconData = Icons.music_note;
-    }
-
-    return Icon(
-      iconData,
-      color: iconColor,
-      size: size,
-    );
-  }
-
 
   LinearGradient? _getGradientForSound(String soundName) {
     if (soundName.toLowerCase() == 'heavenly drift') {
