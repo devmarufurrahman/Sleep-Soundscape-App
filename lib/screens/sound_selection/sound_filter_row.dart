@@ -11,10 +11,10 @@ class SoundFilterRow extends ConsumerWidget {
     final notifier = ref.read(soundProvider.notifier);
 
     return SizedBox(
-      height: 60,
+      height: 35,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         itemCount: categories.length,
         separatorBuilder: (context, index) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
@@ -25,7 +25,7 @@ class SoundFilterRow extends ConsumerWidget {
             onTap: () => notifier.changeCategory(category),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 gradient: isSelected
