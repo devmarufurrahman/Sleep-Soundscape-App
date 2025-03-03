@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
 
 class MixItem {
   final String name;
   final double value;
-  final IconData icon;
+  final String icon;
 
   MixItem({
     required this.name,
@@ -15,7 +14,7 @@ class MixItem {
   MixItem copyWith({
     String? name,
     double? value,
-    IconData? icon,
+    String? icon,
   }) {
     return MixItem(
       name: name ?? this.name,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sleep_soundscape_app/widgets/save_mix_bottom_sheet.dart';
 import '../providers/mix_provider.dart';
 import '../model/mix_item.dart';
 
@@ -10,6 +11,7 @@ class CreateMixBottomSheet extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mixItems = ref.watch(mixProvider);
     final mixNotifier = ref.read(mixProvider.notifier);
+    final currentMixName = ref.watch(currentMixNameProvider);
 
     return Container(
       decoration: const BoxDecoration(
@@ -26,8 +28,8 @@ class CreateMixBottomSheet extends ConsumerWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const Text(
-              "Your Mix",
+            Text(
+              currentMixName,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
@@ -36,7 +38,6 @@ class CreateMixBottomSheet extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 30),
-
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -60,8 +61,20 @@ class CreateMixBottomSheet extends ConsumerWidget {
                     icon: Icons.save,
                     label: "Save",
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Saved")),
+                      final mixItems = ref.read(mixProvider);
+                      final Map<String, double> currentMixMap = {
+                        for (var item in mixItems) item.name: item.value,
+                      };
+
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) {
+                          return SaveMixBottomSheet(
+                            currentMixItems: currentMixMap,
+                          );
+                        },
                       );
                     },
                   ),
@@ -99,7 +112,6 @@ class CreateMixBottomSheet extends ConsumerWidget {
 
   Widget _buildSoundRow(MixItem item, WidgetRef ref) {
     final mixNotifier = ref.read(mixProvider.notifier);
-
     return Container(
       height: 48,
       decoration: BoxDecoration(
@@ -135,10 +147,10 @@ class CreateMixBottomSheet extends ConsumerWidget {
                   ),
                 ),
               ),
-              const Center(
+              Center(
                 child: Text(
-                  "Sound Name",
-                  style: TextStyle(
+                  item.name,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -159,11 +171,11 @@ class CreateMixBottomSheet extends ConsumerWidget {
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 50),
                 curve: Curves.easeInOut,
-                left: (filledWidth - 20).clamp(0, maxWidth - 40),
-                top: 8,
+                left: (filledWidth - 16).clamp(0, maxWidth - 32),
+                top: 6,
                 child: Container(
-                  width: 40,
-                  height: 40,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -175,10 +187,10 @@ class CreateMixBottomSheet extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    item.icon,
+                  child: ImageIcon(
+                    AssetImage(item.icon),
                     color: const Color(0xFF261945),
-                    size: 36,
+                    size: 24,
                   ),
                 ),
               ),
@@ -197,6 +209,7 @@ class CreateMixBottomSheet extends ConsumerWidget {
       ),
     );
   }
+
 
   Widget _buildActionButton({
     required IconData icon,

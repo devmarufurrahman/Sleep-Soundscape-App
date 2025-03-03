@@ -1,16 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sleep_soundscape_app/core/assets.dart';
 import '../model/mix_item.dart';
 import 'package:flutter/material.dart';
 
 class MixNotifier extends StateNotifier<List<MixItem>> {
   MixNotifier()
       : super([
-    MixItem(name: "Typhoon", value: 0.7, icon: Icons.cloud),
-    MixItem(name: "Sleet", value: 0.8, icon: Icons.water_drop),
-    MixItem(name: "Desert Wind", value: 0.5, icon: Icons.air),
-    MixItem(name: "Starry Night", value: 0.3, icon: Icons.nightlight_round),
-    MixItem(name: "Tribal Drums", value: 0.9, icon: Icons.music_note),
+    MixItem(name: "Typhoon", value: 0.7, icon: Assets.iconTyphoon),
+    MixItem(name: "Sleet", value: 0.8, icon: Assets.iconSleet),
+    MixItem(name: "Desert Wind", value: 0.5, icon: Assets.iconDesertWind),
+    MixItem(name: "Starry Night", value: 0.3, icon: Assets.iconStarryNight),
+    MixItem(name: "Tribal Drums", value: 0.9, icon: Assets.iconTribalDrums),
   ]);
+
 
   void updateValue(String name, double newValue) {
     state = state.map((item) {
@@ -30,6 +32,7 @@ class MixNotifier extends StateNotifier<List<MixItem>> {
   }
 }
 
+final currentMixNameProvider = StateProvider<String>((ref) => "Your Mix");
 final mixProvider = StateNotifierProvider<MixNotifier, List<MixItem>>((ref) {
   return MixNotifier();
 });
