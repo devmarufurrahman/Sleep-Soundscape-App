@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sleep_soundscape_app/core/assets.dart';
 import 'package:sleep_soundscape_app/widgets/save_mix_bottom_sheet.dart';
 import '../providers/mix_provider.dart';
 import '../model/mix_item.dart';
 
-class CreateMixBottomSheet extends ConsumerWidget {
+class CreateMixBottomSheet extends ConsumerStatefulWidget {
   const CreateMixBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CreateMixBottomSheet> createState() => _CreateMixBottomSheetState();
+}
+
+class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
+  bool isPlaying = false;
+  @override
+  Widget build(BuildContext context) {
     final mixItems = ref.watch(mixProvider);
     final mixNotifier = ref.read(mixProvider.notifier);
     final currentMixName = ref.watch(currentMixNameProvider);
+    final bool isSaved = currentMixName != "Your Mix";
 
     return Container(
       decoration: const BoxDecoration(
@@ -58,8 +66,8 @@ class CreateMixBottomSheet extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildActionButton(
-                    icon: Icons.save,
-                    label: "Save",
+                    icon: isSaved ? Assets.iconRename : Assets.iconHeart,
+                    label: isSaved ? "Rename" : "Save",
                     onTap: () {
                       final mixItems = ref.read(mixProvider);
                       final Map<String, double> currentMixMap = {
@@ -70,32 +78,24 @@ class CreateMixBottomSheet extends ConsumerWidget {
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
-                        builder: (_) {
-                          return SaveMixBottomSheet(
-                            currentMixItems: currentMixMap,
-                          );
-                        },
+                        builder: (_) => SaveMixBottomSheet(
+                          currentMixItems: currentMixMap,
+                        ),
                       );
                     },
                   ),
                   _buildActionButton(
-                    icon: Icons.pause,
-                    label: "Pause",
+                    icon: isPlaying ? Assets.iconPause : Assets.iconPlay,
+                    label: isPlaying ? "Pause" : "Play",
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Paused")),
-                      );
+                      setState(() {
+                        isPlaying = !isPlaying;
+                      });
                     },
                   ),
+
                   _buildActionButton(
-                    icon: Icons.refresh,
-                    label: "Clear All",
-                    onTap: () {
-                      mixNotifier.clearAll();
-                    },
-                  ),
-                  _buildActionButton(
-                    icon: Icons.close,
+                    icon: Assets.iconClose,
                     label: "Close",
                     onTap: () {
                       Navigator.pop(context);
@@ -212,7 +212,7 @@ class CreateMixBottomSheet extends ConsumerWidget {
 
 
   Widget _buildActionButton({
-    required IconData icon,
+    required String icon,
     required String label,
     required VoidCallback onTap,
   }) {
@@ -221,12 +221,16 @@ class CreateMixBottomSheet extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Color(0xFF9747FF), size: 24),
+          ImageIcon(
+            AssetImage(icon),
+              size: 24,
+            color: Colors.white,
+          ),
           const SizedBox(height: 4),
           Text(
             label,
             style: const TextStyle(
-              color: Color(0xFF9747FF),
+              color: Colors.white,
               fontSize: 12,
             ),
           ),

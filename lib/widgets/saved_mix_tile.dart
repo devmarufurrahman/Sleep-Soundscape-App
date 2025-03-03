@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../model/mix_item.dart';
 import '../model/saved_mix.dart';
-import '../../core/assets.dart';
+import '../model/mix_item.dart';
 import '../providers/mix_provider.dart';
+import '../../core/assets.dart';
 import 'create_mix_bottom_sheet.dart';
 
 final Map<String, String> defaultSoundIconMap = {
@@ -12,89 +12,95 @@ final Map<String, String> defaultSoundIconMap = {
   "Desert Wind": Assets.iconDesertWind,
   "Starry Night": Assets.iconStarryNight,
   "Tribal Drums": Assets.iconTribalDrums,
-  "Rain": Assets.iconSleet,
+  "Rain": Assets.iconSleet, // fallback
 };
 
-class SavedMixTile extends ConsumerWidget {
+class SavedMixTile extends ConsumerStatefulWidget {
   final SavedMix mix;
   const SavedMixTile({super.key, required this.mix});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final soundNames = mix.items.keys.toList();
+  ConsumerState<SavedMixTile> createState() => _SavedMixTileState();
+}
+
+class _SavedMixTileState extends ConsumerState<SavedMixTile> {
+  bool isPlaying = false; // Local state for play/pause
+
+  @override
+  Widget build(BuildContext context) {
+    final soundNames = widget.mix.items.keys.toList();
 
     return GestureDetector(
-        onTap: () {
-      // Convert saved mix (Map<String, double>) into List<MixItem>
-      final newMixItems = mix.items.entries.map((entry) {
-        final assetPath = defaultSoundIconMap[entry.key];
-        return MixItem(
-          name: entry.key,
-          value: entry.value,
-          // MixItem now expects a String for icon (asset path)
-          icon: assetPath ?? '',
+      onTap: () {
+        // Convert saved mix (Map<String, double>) into List<MixItem>
+        final newMixItems = widget.mix.items.entries.map((entry) {
+          final assetPath = defaultSoundIconMap[entry.key];
+          return MixItem(
+            name: entry.key,
+            value: entry.value,
+            // MixItem now expects a String for icon (asset path)
+            icon: assetPath ?? '',
+          );
+        }).toList();
+
+        // Update mixProvider with new mix items
+        ref.read(mixProvider.notifier).setMixItems(newMixItems);
+
+        // Update current mix name provider to show saved mix name
+        ref.read(currentMixNameProvider.notifier).state = widget.mix.name;
+
+        // Open CreateMixBottomSheet for editing/playing the mix
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => CreateMixBottomSheet(),
         );
-      }).toList();
-
-      // Update mixProvider with new mix items
-      ref.read(mixProvider.notifier).setMixItems(newMixItems);
-
-      // Update current mix name provider to show saved mix name
-      ref.read(currentMixNameProvider.notifier).state = mix.name;
-
-      // Open CreateMixBottomSheet for editing/playing the mix
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (_) => const CreateMixBottomSheet(),
-      );
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(8), // কম padding
-      child: IntrinsicHeight(
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             // Sound icons Wrap
             Wrap(
-              spacing: 4, // spacing কমানো
+              spacing: 4,
               runSpacing: 4,
               children: soundNames.take(6).map((sound) {
                 final assetPath = defaultSoundIconMap[sound];
                 return Container(
-                  width: 28, // container size কমানো
-                  height: 28,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     color: Colors.white12,
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: assetPath != null && assetPath.isNotEmpty
                       ? ImageIcon(
                     AssetImage(assetPath),
                     color: Colors.white,
-                    size: 16, // icon size কমানো
+                    size: 14,
                   )
-                      : Icon(
+                      : const Icon(
                     Icons.music_note,
                     color: Colors.white,
-                    size: 16,
+                    size: 20,
                   ),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             // Mix name text
             Text(
-              mix.name,
+              widget.mix.name,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 14, // font size কমানো
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -105,34 +111,40 @@ class SavedMixTile extends ConsumerWidget {
                 soundNames.join(' • '),
                 style: const TextStyle(
                   color: Colors.white70,
-                  fontSize: 12,
+                  fontSize: 14,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            // Bottom play button
-            const SizedBox(height: 4),
+
+            // Bottom play/pause button with toggle functionality
             Align(
               alignment: Alignment.bottomRight,
-              child: Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF9747FF),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
-                  size: 20,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isPlaying = !isPlaying;
+                  });
+                },
+                child: Container(
+                  width: 35,
+                  height: 35,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF9747FF),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ),
-    )
     );
   }
 }

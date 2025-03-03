@@ -13,7 +13,9 @@ class Assets {
   static const String iconTyphoon = "assets/icons/typhoon.png";
   static const String iconClose = "assets/icons/close.png";
   static const String iconHeart = "assets/icons/heart.png";
+  static const String iconRename = "assets/icons/edit.png";
   static const String iconPause = "assets/icons/pause.png";
+  static const String iconPlay = "assets/icons/play.png";
 
   // Background Images
   static const String backgroundImage = "assets/images/background.png";

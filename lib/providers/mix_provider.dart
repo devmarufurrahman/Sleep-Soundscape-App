@@ -10,7 +10,7 @@ class MixNotifier extends StateNotifier<List<MixItem>> {
     MixItem(name: "Sleet", value: 0.8, icon: Assets.iconSleet),
     MixItem(name: "Desert Wind", value: 0.5, icon: Assets.iconDesertWind),
     MixItem(name: "Starry Night", value: 0.3, icon: Assets.iconStarryNight),
-    MixItem(name: "Tribal Drums", value: 0.9, icon: Assets.iconTribalDrums),
+    MixItem(name: "Tribal Drums", value: 0.6, icon: Assets.iconTribalDrums),
   ]);
 
 
