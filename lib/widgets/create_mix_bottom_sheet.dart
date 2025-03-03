@@ -128,7 +128,7 @@ class CreateMixBottomSheet extends ConsumerWidget {
             alignment: Alignment.centerLeft,
             children: [
               Container(
-                height: 48,
+                height: 40,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                 ),
@@ -171,11 +171,11 @@ class CreateMixBottomSheet extends ConsumerWidget {
               AnimatedPositioned(
                 duration: const Duration(milliseconds: 50),
                 curve: Curves.easeInOut,
-                left: (filledWidth - 16).clamp(0, maxWidth - 32),
+                left: (filledWidth - 20).clamp(0, maxWidth - 32),
                 top: 6,
                 child: Container(
-                  width: 32,
-                  height: 32,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
@@ -190,7 +190,7 @@ class CreateMixBottomSheet extends ConsumerWidget {
                   child: ImageIcon(
                     AssetImage(item.icon),
                     color: const Color(0xFF261945),
-                    size: 24,
+                    size: 6,
                   ),
                 ),
               ),

@@ -9,6 +9,7 @@ import '../../model/sound_item.dart';
 import '../../providers/sound_provider.dart';
 import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/create_mix_bottom_sheet.dart';
+import '../../widgets/saved_mix_grid.dart';
 import '../../widgets/sound_grid.dart';
 
 final List<SoundItem> allSoundItems = [
@@ -243,12 +244,14 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                             )),
                           ],
                         )
-                      : Center(
-                          child: Text(
-                            "Saved Content Here",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        ),
+                      :  Column(
+                    children: [
+                      const SizedBox(height: 20),
+                      const Expanded(
+                        child: SavedMixGrid(),
+                      ),
+                    ],
+                  ),
                 ),
                 if (_showFAB)
                   Center(

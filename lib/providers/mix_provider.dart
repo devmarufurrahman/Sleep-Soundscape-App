@@ -30,6 +30,11 @@ class MixNotifier extends StateNotifier<List<MixItem>> {
   void clearAll() {
     state = state.map((item) => item.copyWith(value: 0.0)).toList();
   }
+
+  void setMixItems(List<MixItem> newItems) {
+    state = newItems;
+  }
+
 }
 
 final currentMixNameProvider = StateProvider<String>((ref) => "Your Mix");
