@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sleep_soundscape_app/core/assets.dart';
 import 'package:sleep_soundscape_app/screens/sound_selection/sound_filter_row.dart';
 import 'package:sleep_soundscape_app/widgets/custom_app_bar.dart';
+import 'package:sleep_soundscape_app/widgets/custom_mini_fab.dart';
 import '../../model/sound_item.dart';
 import '../../providers/sound_provider.dart';
 import '../../widgets/bottom_nav_bar.dart';
+import '../../widgets/create_mix_bottom_sheet.dart';
 import '../../widgets/sound_grid.dart';
 
 final List<SoundItem> allSoundItems = [
@@ -263,17 +265,13 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              _buildMiniFab(Assets.iconPause, "Pause"),
+                              CustomMiniFab(icon: Assets.iconPause, tooltip: "Pause"),
                               const SizedBox(width: 8),
-                              _buildMiniFab(Assets.iconCreate, "Create"),
+                              CustomMiniFab(icon: Assets.iconCreate, tooltip: "Create"),
                               const SizedBox(width: 8),
-                              _buildMiniFab(Assets.iconHeart, "Favourite"),
+                              CustomMiniFab(icon: Assets.iconHeart, tooltip: "Favourite"),
                               const SizedBox(width: 8),
-                              _buildMiniFab(Assets.iconClose, "Close", onPressed: () {
-                                setState(() {
-                                  _showFAB = false;
-                                });
-                              }),
+                              CustomMiniFab(icon: Assets.iconClose, tooltip: "Close"),
                             ],
                           ),
                         ),
@@ -290,20 +288,4 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
     );
   }
 
-  Widget _buildMiniFab(String icon, String tooltip,
-      {VoidCallback? onPressed}) {
-    return FloatingActionButton(
-      mini: true,
-      tooltip: tooltip,
-      onPressed: onPressed ??
-          () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Clicked $tooltip")),
-            );
-          },
-      child: ImageIcon(
-        AssetImage(icon)
-      ),
-    );
-  }
 }

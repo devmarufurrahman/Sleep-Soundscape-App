@@ -1,190 +1,222 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/mix_provider.dart';
+import '../model/mix_item.dart';
 
-class CreateMixBottomSheet extends StatefulWidget {
-  const CreateMixBottomSheet({Key? key}) : super(key: key);
-
-  @override
-  State<CreateMixBottomSheet> createState() => _CreateMixBottomSheetState();
-}
-
-class _CreateMixBottomSheetState extends State<CreateMixBottomSheet> {
-  // কয়েকটি স্লাইডার ভ্যালু রাখার জন্য
-  double _sliderValue1 = 0.5;
-  double _sliderValue2 = 0.3;
-  double _sliderValue3 = 0.7;
+class CreateMixBottomSheet extends ConsumerWidget {
+  const CreateMixBottomSheet({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mixItems = ref.watch(mixProvider);
+    final mixNotifier = ref.read(mixProvider.notifier);
+
     return Container(
-      // অ্যানিমেটেড Bottom Sheet এর জন্য শীর্ষে গোলাকার কার্নার
       decoration: const BoxDecoration(
-        color: Color(0xFF1E0036), // গাঢ় ব্যাকগ্রাউন্ড, আপনি ইচ্ছামতো পাল্টাতে পারেন
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF1A0B2E),
+            Color(0xFF0D0619),
+          ],
         ),
       ),
-      padding: const EdgeInsets.all(16),
+      child: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            const Text(
+              "Your Mix",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: mixItems.length,
+                itemBuilder: (context, index) {
+                  final item = mixItems[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: _buildSoundRow(item, ref),
+                  );
+                },
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildActionButton(
+                    icon: Icons.save,
+                    label: "Save",
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Saved")),
+                      );
+                    },
+                  ),
+                  _buildActionButton(
+                    icon: Icons.pause,
+                    label: "Pause",
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Paused")),
+                      );
+                    },
+                  ),
+                  _buildActionButton(
+                    icon: Icons.refresh,
+                    label: "Clear All",
+                    onTap: () {
+                      mixNotifier.clearAll();
+                    },
+                  ),
+                  _buildActionButton(
+                    icon: Icons.close,
+                    label: "Close",
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSoundRow(MixItem item, WidgetRef ref) {
+    final mixNotifier = ref.read(mixProvider.notifier);
+
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: const Color(0xFF261945),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxWidth = constraints.maxWidth;
+          final filledWidth = maxWidth * item.value;
+
+          return Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.centerLeft,
+            children: [
+              Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: filledWidth.clamp(0, maxWidth),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(24),
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF9747FF), Color(0xFF7B3FE4)],
+                    ),
+                  ),
+                ),
+              ),
+              const Center(
+                child: Text(
+                  "Sound Name",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Opacity(
+                opacity: 0.0,
+                child: Slider(
+                  value: item.value,
+                  min: 0.0,
+                  max: 1.0,
+                  onChanged: (newVal) {
+                    mixNotifier.updateValue(item.name, newVal);
+                  },
+                ),
+              ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 50),
+                curve: Curves.easeInOut,
+                left: (filledWidth - 20).clamp(0, maxWidth - 40),
+                top: 8,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    item.icon,
+                    color: const Color(0xFF261945),
+                    size: 36,
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 0,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    mixNotifier.removeItem(item.name);
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
       child: Column(
-        mainAxisSize: MainAxisSize.min, // কন্টেন্ট অনুযায়ী উচ্চতা নেবে
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // শীর্ষে একটা ছোট ড্র্যাগ হ্যান্ডেল (ঐচ্ছিক)
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white38,
-              borderRadius: BorderRadius.circular(2),
+          Icon(icon, color: Color(0xFF9747FF), size: 24),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0xFF9747FF),
+              fontSize: 12,
             ),
           ),
-          const SizedBox(height: 12),
-
-          // "Your Mix" শিরোনাম
-          const Text(
-            "Your Mix",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // স্লাইডার ১
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  "Typhoon",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Slider(
-                  value: _sliderValue1,
-                  min: 0.0,
-                  max: 1.0,
-                  activeColor: Colors.purpleAccent,
-                  onChanged: (value) {
-                    setState(() {
-                      _sliderValue1 = value;
-                    });
-                  },
-                ),
-              ),
-              // আইকন বা অন্য কিছু রাখতে পারেন
-              Icon(Icons.cloud, color: Colors.white),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // স্লাইডার ২
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  "Sleet",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Slider(
-                  value: _sliderValue2,
-                  min: 0.0,
-                  max: 1.0,
-                  activeColor: Colors.purpleAccent,
-                  onChanged: (value) {
-                    setState(() {
-                      _sliderValue2 = value;
-                    });
-                  },
-                ),
-              ),
-              Icon(Icons.water_drop, color: Colors.white),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // স্লাইডার ৩
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  "Desert Wind",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Slider(
-                  value: _sliderValue3,
-                  min: 0.0,
-                  max: 1.0,
-                  activeColor: Colors.purpleAccent,
-                  onChanged: (value) {
-                    setState(() {
-                      _sliderValue3 = value;
-                    });
-                  },
-                ),
-              ),
-              Icon(Icons.air, color: Colors.white),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // নিচে কয়েকটি অ্যাকশন বাটন
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Save action
-                },
-                icon: const Icon(Icons.save),
-                label: const Text("Save"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purpleAccent,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Pause action
-                },
-                icon: const Icon(Icons.pause),
-                label: const Text("Pause"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purpleAccent,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  // Clear action
-                  setState(() {
-                    _sliderValue1 = 0.0;
-                    _sliderValue2 = 0.0;
-                    _sliderValue3 = 0.0;
-                  });
-                },
-                icon: const Icon(Icons.clear_all),
-                label: const Text("Clear All"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purpleAccent,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () => Navigator.of(context).pop(), // Bottom Sheet বন্ধ
-                icon: const Icon(Icons.close),
-                label: const Text("Close"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purpleAccent,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
         ],
       ),
     );
