@@ -10,20 +10,48 @@ import '../../widgets/bottom_nav_bar.dart';
 import '../../widgets/sound_grid.dart';
 
 final List<SoundItem> allSoundItems = [
-  SoundItem(name: "Typhoon", iconPath: Assets.iconTyphoon, isLocked: false, category: "Wind"),
-  SoundItem(name: "Sleet", iconPath: Assets.iconSleet, isLocked: false, category: "Rain"),
-  SoundItem(name: "Heavenly Drift", iconPath: "", isLocked: false, category: "Wind"),
-  SoundItem(name: "Snowy Winter", iconPath: Assets.iconSnowyWinter, isLocked: false, category: ""),
-  SoundItem(name: "Cloudiness", iconPath: "", isLocked: false, category: "Rain"),
-  SoundItem(name: "Desert Wind", iconPath: Assets.iconDesertWind, isLocked: false, category: "Wind"),
-  SoundItem(name: "Starry Nights", iconPath: Assets.iconStarryNight, isLocked: false, category: ""),
-  SoundItem(name: "Tribal Drums", iconPath: Assets.iconTribalDrums, isLocked: false, category: ""),
-  SoundItem(name: "Light Rain ", iconPath: "", isLocked: true, category: "Rain"),
+  SoundItem(
+      name: "Typhoon",
+      iconPath: Assets.iconTyphoon,
+      isLocked: false,
+      category: "Wind"),
+  SoundItem(
+      name: "Sleet",
+      iconPath: Assets.iconSleet,
+      isLocked: false,
+      category: "Rain"),
+  SoundItem(
+      name: "Heavenly Drift", iconPath: "", isLocked: false, category: "Wind"),
+  SoundItem(
+      name: "Snowy Winter",
+      iconPath: Assets.iconSnowyWinter,
+      isLocked: false,
+      category: ""),
+  SoundItem(
+      name: "Cloudiness", iconPath: "", isLocked: false, category: "Rain"),
+  SoundItem(
+      name: "Desert Wind",
+      iconPath: Assets.iconDesertWind,
+      isLocked: false,
+      category: "Wind"),
+  SoundItem(
+      name: "Starry Nights",
+      iconPath: Assets.iconStarryNight,
+      isLocked: false,
+      category: ""),
+  SoundItem(
+      name: "Tribal Drums",
+      iconPath: Assets.iconTribalDrums,
+      isLocked: false,
+      category: ""),
+  SoundItem(
+      name: "Light Rain ", iconPath: "", isLocked: true, category: "Rain"),
   SoundItem(name: "Wind", iconPath: "", isLocked: true, category: "Wind"),
   SoundItem(name: "Thunder", iconPath: "", isLocked: true, category: "Rain"),
   SoundItem(name: "Tornado", iconPath: "", isLocked: true, category: "Wind"),
   SoundItem(name: "Medium Rain", iconPath: "", isLocked: true, category: ""),
-  SoundItem(name: "Snowy Breeze", iconPath: "", isLocked: true, category: "Wind"),
+  SoundItem(
+      name: "Snowy Breeze", iconPath: "", isLocked: true, category: "Wind"),
   SoundItem(name: "Heavy Rain", iconPath: "", isLocked: true, category: "Rain"),
   SoundItem(name: "Wind", iconPath: "", isLocked: true, category: "Wind"),
 ];
@@ -32,7 +60,8 @@ class SoundSelectionScreen extends ConsumerStatefulWidget {
   const SoundSelectionScreen({super.key});
 
   @override
-  ConsumerState<SoundSelectionScreen> createState() => _SoundSelectionScreenState();
+  ConsumerState<SoundSelectionScreen> createState() =>
+      _SoundSelectionScreenState();
 }
 
 class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
@@ -40,6 +69,7 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   String _searchText = "";
+  bool _showFAB = false;
 
   void _onNavBarTap(int index) {
     setState(() {
@@ -47,18 +77,26 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
     });
   }
 
+  void _handleTileTap(SoundItem item) {
+    if (item.iconPath.isNotEmpty) {
+      setState(() {
+        _showFAB = true;
+      });
+    }
+  }
+
   List<SoundItem> _getFilteredItems(String selectedCategory) {
     List<SoundItem> filtered = allSoundItems;
     if (selectedCategory != "All") {
       filtered = filtered
           .where((item) =>
-      item.category.toLowerCase() == selectedCategory.toLowerCase())
+              item.category.toLowerCase() == selectedCategory.toLowerCase())
           .toList();
     }
     if (_searchText.isNotEmpty) {
       filtered = filtered
           .where((item) =>
-          item.name.toLowerCase().contains(_searchText.toLowerCase()))
+              item.name.toLowerCase().contains(_searchText.toLowerCase()))
           .toList();
     }
     return filtered;
@@ -101,15 +139,13 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
           });
         },
       ),
-      body:  Stack(
+      body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage(Assets.backgroundImage),
-                    fit: BoxFit.cover
-                )
-            ),
+                    fit: BoxFit.cover)),
           ),
           SafeArea(
             child: Column(
@@ -128,17 +164,24 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                               borderRadius: BorderRadius.circular(20),
                               gradient: soundState.selectedTab == 0
                                   ? const LinearGradient(
-                                colors: [Color(0xFF42098F), Color(0xFFB53FFE)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              )
+                                      colors: [
+                                        Color(0xFF42098F),
+                                        Color(0xFFB53FFE)
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    )
                                   : null,
-                              color: soundState.selectedTab == 0 ? null : const Color(0xFF09001F),
+                              color: soundState.selectedTab == 0
+                                  ? null
+                                  : const Color(0xFF09001F),
                             ),
                             child: Text(
                               "Sounds",
                               style: TextStyle(
-                                color: soundState.selectedTab == 0 ? Colors.white : Colors.white54,
+                                color: soundState.selectedTab == 0
+                                    ? Colors.white
+                                    : Colors.white54,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -156,17 +199,24 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                               borderRadius: BorderRadius.circular(20),
                               gradient: soundState.selectedTab == 1
                                   ? const LinearGradient(
-                                colors: [Color(0xFF42098F), Color(0xFFB53FFE)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              )
+                                      colors: [
+                                        Color(0xFF42098F),
+                                        Color(0xFFB53FFE)
+                                      ],
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                    )
                                   : null,
-                              color: soundState.selectedTab == 1 ? null : const Color(0xFF09001F),
+                              color: soundState.selectedTab == 1
+                                  ? null
+                                  : const Color(0xFF09001F),
                             ),
                             child: Text(
                               "Saved",
                               style: TextStyle(
-                                color: soundState.selectedTab == 1 ? Colors.white : Colors.white54,
+                                color: soundState.selectedTab == 1
+                                    ? Colors.white
+                                    : Colors.white54,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -176,30 +226,84 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                     ],
                   ),
                 ),
-
                 Expanded(
                   child: soundState.selectedTab == 0
                       ? Column(
-                    children: [
-                      const SizedBox(height: 20,),
-                      const SoundFilterRow(),
-                      Expanded(child: SoundGrid(items: filteredItems)),
-                    ],
-                  )
+                          children: [
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            const SoundFilterRow(),
+                            Expanded(
+                                child: SoundGrid(
+                              items: filteredItems,
+                              onTileTap: _handleTileTap,
+                            )),
+                          ],
+                        )
                       : Center(
-                    child: Text(
-                      "Saved Content Here",
-                      style: TextStyle(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
+                          child: Text(
+                            "Saved Content Here",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        ),
                 ),
+                if (_showFAB)
+                  Center(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                        child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(20),
+                        ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildMiniFab(Assets.iconPause, "Pause"),
+                              const SizedBox(width: 8),
+                              _buildMiniFab(Assets.iconCreate, "Create"),
+                              const SizedBox(width: 8),
+                              _buildMiniFab(Assets.iconHeart, "Favourite"),
+                              const SizedBox(width: 8),
+                              _buildMiniFab(Assets.iconClose, "Close", onPressed: () {
+                                setState(() {
+                                  _showFAB = false;
+                                });
+                              }),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavBar(currentIndex: _selectedIndex, onTap: _onNavBarTap),
+      bottomNavigationBar:
+          BottomNavBar(currentIndex: _selectedIndex, onTap: _onNavBarTap),
     );
   }
 
+  Widget _buildMiniFab(String icon, String tooltip,
+      {VoidCallback? onPressed}) {
+    return FloatingActionButton(
+      mini: true,
+      tooltip: tooltip,
+      onPressed: onPressed ??
+          () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Clicked $tooltip")),
+            );
+          },
+      child: ImageIcon(
+        AssetImage(icon)
+      ),
+    );
+  }
 }

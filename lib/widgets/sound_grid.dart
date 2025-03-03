@@ -3,7 +3,8 @@ import '../model/sound_item.dart';
 
 class SoundGrid extends StatelessWidget {
   final List<SoundItem> items;
-  const SoundGrid({super.key, required this.items});
+  final void Function(SoundItem)? onTileTap;
+  const SoundGrid({super.key, required this.items, this.onTileTap,});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,12 @@ class SoundGrid extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final sound = items[index];
-        return SoundTile(item: sound);
+        return GestureDetector(
+          onTap: () {
+            onTileTap?.call(sound);
+          },
+          child: SoundTile(item: sound),
+        );
       },
     );
   }
@@ -92,7 +98,7 @@ class SoundTile extends StatelessWidget {
   }
 
   LinearGradient? _getGradientForSound(String soundName) {
-    if (soundName.toLowerCase() == 'heavenly drift') {
+    if (soundName.toLowerCase() == 'sleet') {
       return LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
@@ -101,7 +107,7 @@ class SoundTile extends StatelessWidget {
           Color(0xFF5C1E99),
         ],
       );
-    } else if (soundName.toLowerCase() == 'tribal drums') {
+    } else if (soundName.toLowerCase() == 'typhoon') {
       return LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,

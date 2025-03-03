@@ -11,6 +11,9 @@ class Assets {
   static const String iconStarryNight = "assets/icons/starry_night.png";
   static const String iconTribalDrums = "assets/icons/tribal_drums.png";
   static const String iconTyphoon = "assets/icons/typhoon.png";
+  static const String iconClose = "assets/icons/close.png";
+  static const String iconHeart = "assets/icons/heart.png";
+  static const String iconPause = "assets/icons/pause.png";
 
   // Background Images
   static const String backgroundImage = "assets/images/background.png";
