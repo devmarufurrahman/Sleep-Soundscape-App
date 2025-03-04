@@ -1,4 +1,3 @@
-
 class MixItem {
   final String name;
   final double value;
@@ -9,7 +8,6 @@ class MixItem {
     required this.value,
     required this.icon,
   });
-
 
   MixItem copyWith({
     String? name,

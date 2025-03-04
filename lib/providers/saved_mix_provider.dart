@@ -28,7 +28,6 @@ class SavedMixNotifier extends StateNotifier<List<SavedMix>> {
 
   Future<void> saveMix(String mixName, Map<String, double> items) async {
     await _box.put(mixName, items);
-
     List<SavedMix> newList = [...state];
     final existingIndex = newList.indexWhere((m) => m.name == mixName);
     if (existingIndex >= 0) {
@@ -36,8 +35,6 @@ class SavedMixNotifier extends StateNotifier<List<SavedMix>> {
     } else {
       newList.add(SavedMix(name: mixName, items: items));
     }
-
     state = newList;
   }
-
 }

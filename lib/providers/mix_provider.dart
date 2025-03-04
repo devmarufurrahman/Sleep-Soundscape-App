@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sleep_soundscape_app/core/assets.dart';
 import '../model/mix_item.dart';
 import 'package:flutter/material.dart';
+import 'package:sleep_soundscape_app/core/assets.dart';
 
 class MixNotifier extends StateNotifier<List<MixItem>> {
   MixNotifier()
@@ -12,7 +12,6 @@ class MixNotifier extends StateNotifier<List<MixItem>> {
     MixItem(name: "Starry Night", value: 0.3, icon: Assets.iconStarryNight),
     MixItem(name: "Tribal Drums", value: 0.6, icon: Assets.iconTribalDrums),
   ]);
-
 
   void updateValue(String name, double newValue) {
     state = state.map((item) {
@@ -34,10 +33,11 @@ class MixNotifier extends StateNotifier<List<MixItem>> {
   void setMixItems(List<MixItem> newItems) {
     state = newItems;
   }
-
 }
 
-final currentMixNameProvider = StateProvider<String>((ref) => "Your Mix");
 final mixProvider = StateNotifierProvider<MixNotifier, List<MixItem>>((ref) {
   return MixNotifier();
 });
+
+// Current mix name (for display in CreateMixBottomSheet)
+final currentMixNameProvider = StateProvider<String>((ref) => "Your Mix");

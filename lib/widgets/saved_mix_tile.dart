@@ -12,7 +12,7 @@ final Map<String, String> defaultSoundIconMap = {
   "Desert Wind": Assets.iconDesertWind,
   "Starry Night": Assets.iconStarryNight,
   "Tribal Drums": Assets.iconTribalDrums,
-  "Rain": Assets.iconSleet, // fallback
+  "Rain": Assets.iconSleet,
 };
 
 class SavedMixTile extends ConsumerStatefulWidget {
@@ -24,7 +24,7 @@ class SavedMixTile extends ConsumerStatefulWidget {
 }
 
 class _SavedMixTileState extends ConsumerState<SavedMixTile> {
-  bool isPlaying = false; // Local state for play/pause
+  bool isPlaying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,6 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
 
     return GestureDetector(
       onTap: () {
-        // Convert saved mix (Map<String, double>) into List<MixItem>
         final newMixItems = widget.mix.items.entries.map((entry) {
           final assetPath = defaultSoundIconMap[entry.key];
           return MixItem(
@@ -49,7 +48,7 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
         // Update current mix name provider to show saved mix name
         ref.read(currentMixNameProvider.notifier).state = widget.mix.name;
 
-        // Open CreateMixBottomSheet for editing/playing the mix
+
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
@@ -67,7 +66,6 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Sound icons Wrap
             Wrap(
               spacing: 4,
               runSpacing: 4,

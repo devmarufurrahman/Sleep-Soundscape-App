@@ -73,6 +73,8 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = "";
   bool _showFAB = false;
+  int selectedFabIndex = 0;
+  bool isPlaying = false;
 
   void _onNavBarTap(int index) {
     setState(() {
@@ -116,6 +118,7 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
     final soundState = ref.watch(soundProvider);
     final soundNotifier = ref.read(soundProvider.notifier);
     final filteredItems = _getFilteredItems(soundState.selectedCategory);
+
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -260,26 +263,75 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
                         child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(20),
-                        ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              CustomMiniFab(icon: Assets.iconPause, tooltip: "Pause"),
+                              CustomMiniFab(
+                                icon: selectedFabIndex == 0
+                                    ? (isPlaying ? Assets.iconPause : Assets.iconPlay)
+                                    : Assets.iconPlay,
+                                tooltip: "Pause",
+                                isSelected: selectedFabIndex == 0,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedFabIndex = 0;
+                                    isPlaying = !isPlaying;
+                                  });
+                                },
+                              ),
                               const SizedBox(width: 8),
-                              CustomMiniFab(icon: Assets.iconCreate, tooltip: "Create"),
+                              CustomMiniFab(
+                                icon: Assets.iconCreate,
+                                tooltip: "Create",
+                                isSelected: selectedFabIndex == 1,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedFabIndex = 1;
+                                  });
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (ctx) {
+                                      return const CreateMixBottomSheet();
+                                    },
+                                  );
+                                },
+                              ),
                               const SizedBox(width: 8),
-                              CustomMiniFab(icon: Assets.iconHeart, tooltip: "Favourite"),
+                              CustomMiniFab(
+                                icon: Assets.iconHeart,
+                                tooltip: "Favourite",
+                                isSelected: selectedFabIndex == 2,
+                                onPressed: () {
+                                  setState(() {
+                                    selectedFabIndex = 2;
+                                  });
+                                },
+                              ),
                               const SizedBox(width: 8),
-                              CustomMiniFab(icon: Assets.iconClose, tooltip: "Close"),
+                              CustomMiniFab(
+                                icon: Assets.iconClose,
+                                tooltip: "Close",
+                                isSelected: selectedFabIndex == 3,
+                                onPressed: () {
+                                  // You can add additional close logic if needed.
+                                  setState(() {
+                                    selectedFabIndex = 3;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              ),
                             ],
                           ),
                         ),
                       ),
-                    )
+                    ),
                   ),
               ],
             ),

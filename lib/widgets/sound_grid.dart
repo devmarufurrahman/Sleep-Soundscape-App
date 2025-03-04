@@ -41,11 +41,10 @@ class SoundTile extends StatelessWidget {
         Expanded(
           child: Stack(
             children: [
-              // Main tile container
               Container(
                 decoration: BoxDecoration(
                   color: const Color(0xFF0B0020),
-                  borderRadius: BorderRadius.circular(24), // More rounded corners
+                  borderRadius: BorderRadius.circular(24),
                   gradient: _getGradientForSound(item.name),
                 ),
                 child: Center(
@@ -118,7 +117,7 @@ class SoundTile extends StatelessWidget {
       );
     }
 
-    return null; // Return null for default color
+    return null;
   }
 
 }
