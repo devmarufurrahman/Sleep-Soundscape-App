@@ -116,8 +116,8 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
                         ref.read(mixProvider.notifier).clearAll();
                         // Reset the current mix name to default.
                         ref.read(currentMixNameProvider.notifier).state = "Your Mix";
+                        Navigator.pop(context);
                       }
-                      Navigator.pop(context);
                     },
                   ),
 
