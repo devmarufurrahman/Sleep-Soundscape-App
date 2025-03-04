@@ -37,4 +37,10 @@ class SavedMixNotifier extends StateNotifier<List<SavedMix>> {
     }
     state = newList;
   }
+  // for rename
+  Future<void> removeMix(String mixName) async {
+    await _box.delete(mixName);
+    state = state.where((m) => m.name != mixName).toList();
+  }
+
 }

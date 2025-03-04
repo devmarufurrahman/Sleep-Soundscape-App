@@ -5,7 +5,15 @@ import '../providers/saved_mix_provider.dart';
 
 class SaveMixBottomSheet extends ConsumerStatefulWidget {
   final Map<String, double> currentMixItems;
-  const SaveMixBottomSheet({super.key, required this.currentMixItems});
+  final String? initialName; // আগের নাম থাকলে সেটি দেখাবে
+  final bool isRename; // Rename mode active হবে কিনা
+
+  const SaveMixBottomSheet({
+    super.key,
+    required this.currentMixItems,
+    this.initialName,
+    this.isRename = false,
+  });
 
   @override
   ConsumerState<SaveMixBottomSheet> createState() => _SaveMixBottomSheetState();
@@ -18,13 +26,13 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialName != null) {
+      _nameController.text = widget.initialName!;
+    }
     _nameController.addListener(() {
-      final isEnabled = _nameController.text.trim().isNotEmpty;
-      if (isEnabled != _isSaveEnabled) {
-        setState(() {
-          _isSaveEnabled = isEnabled;
-        });
-      }
+      setState(() {
+        _isSaveEnabled = _nameController.text.trim().isNotEmpty;
+      });
     });
   }
 
@@ -37,6 +45,11 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final savedMixNotifier = ref.read(savedMixNotifierProvider.notifier);
+
+    // Rename হলে আলাদা টাইটেল এবং বাটনের টেক্সট সেট করা
+    final String title = widget.isRename ? "Rename this mix?" : "Save this mix?";
+    final String saveButtonText = widget.isRename ? "Save Changes" : "Save";
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: const BoxDecoration(
@@ -49,9 +62,9 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            "Save this mix?",
-            style: TextStyle(
+          Text(
+            title,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -89,15 +102,24 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
                 ),
                 child: const Text("Cancel", style: TextStyle(color: Colors.white)),
               ),
-              // Save Button: Enable only when _isSaveEnabled == true
+              // Save Button
               ElevatedButton(
                 onPressed: _isSaveEnabled
                     ? () async {
-                  final name = _nameController.text.trim();
-                  if (name.isNotEmpty) {
-                    await savedMixNotifier.saveMix(name, widget.currentMixItems);
-                    ref.read(currentMixNameProvider.notifier).state = name;
-                    Navigator.pop(context); // Close SaveMixBottomSheet
+                  final newName = _nameController.text.trim();
+                  if (newName.isNotEmpty) {
+                    // Check if we are in rename mode and the name has changed.
+                    if (widget.isRename &&
+                        widget.initialName != null &&
+                        widget.initialName != newName) {
+                      // Remove the old mix record using the old name.
+                      await ref.read(savedMixNotifierProvider.notifier).removeMix(widget.initialName!);
+                    }
+                    // Save or update the mix with the new name.
+                    await ref.read(savedMixNotifierProvider.notifier).saveMix(newName, widget.currentMixItems);
+                    // Update the current mix name provider.
+                    ref.read(currentMixNameProvider.notifier).state = newName;
+                    Navigator.pop(context); // Close the bottom sheet
                   }
                 }
                     : null,
@@ -107,7 +129,7 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: const Text("Save", style: TextStyle(color: Colors.white)),
+                child: Text(saveButtonText, style: const TextStyle(color: Colors.white)),
               ),
             ],
           ),

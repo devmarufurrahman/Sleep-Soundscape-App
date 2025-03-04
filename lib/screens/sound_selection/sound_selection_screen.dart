@@ -323,8 +323,8 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                                   // You can add additional close logic if needed.
                                   setState(() {
                                     selectedFabIndex = 3;
+                                    _showFAB = false;
                                   });
-                                  Navigator.pop(context);
                                 },
                               ),
                             ],

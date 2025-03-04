@@ -14,6 +14,7 @@ class CreateMixBottomSheet extends ConsumerStatefulWidget {
 
 class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
   bool isPlaying = false;
+
   @override
   Widget build(BuildContext context) {
     final mixItems = ref.watch(mixProvider);
@@ -22,32 +23,33 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
     final bool isSaved = currentMixName != "Your Mix";
 
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF1A0B2E),
-            Color(0xFF0D0619),
-          ],
+        color: Color(0xFF1E0036),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(24),
+          topRight: Radius.circular(24),
         ),
       ),
       child: SafeArea(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 20),
             Text(
               currentMixName,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 30),
-            Expanded(
+
+            Flexible(
               child: ListView.builder(
+                shrinkWrap: true,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount: mixItems.length,
                 itemBuilder: (context, index) {
@@ -59,7 +61,7 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
                 },
               ),
             ),
-
+            const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Row(
@@ -80,10 +82,13 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
                         backgroundColor: Colors.transparent,
                         builder: (_) => SaveMixBottomSheet(
                           currentMixItems: currentMixMap,
+                          isRename: isSaved,
+                          initialName: isSaved ? currentMixName : null,
                         ),
                       );
                     },
                   ),
+
                   _buildActionButton(
                     icon: isPlaying ? Assets.iconPause : Assets.iconPlay,
                     label: isPlaying ? "Pause" : "Play",
@@ -91,9 +96,13 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
                       setState(() {
                         isPlaying = !isPlaying;
                       });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isPlaying ? "Playing" : "Paused"),
+                        ),
+                      );
                     },
                   ),
-
                   _buildActionButton(
                     icon: Assets.iconClose,
                     label: "Close",
@@ -210,7 +219,6 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
     );
   }
 
-
   Widget _buildActionButton({
     required String icon,
     required String label,
@@ -223,7 +231,7 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
         children: [
           ImageIcon(
             AssetImage(icon),
-              size: 24,
+            size: 24,
             color: Colors.white,
           ),
           const SizedBox(height: 4),
