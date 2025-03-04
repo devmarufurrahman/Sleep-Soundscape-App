@@ -4,6 +4,7 @@ import 'package:sleep_soundscape_app/core/assets.dart';
 import 'package:sleep_soundscape_app/widgets/save_mix_bottom_sheet.dart';
 import '../providers/mix_provider.dart';
 import '../model/mix_item.dart';
+import '../providers/saved_mix_provider.dart';
 
 class CreateMixBottomSheet extends ConsumerStatefulWidget {
   const CreateMixBottomSheet({super.key});
@@ -105,11 +106,21 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
                   ),
                   _buildActionButton(
                     icon: Assets.iconClose,
-                    label: "Close",
+                    label: "Clear All",
                     onTap: () {
+                      final currentName = ref.read(currentMixNameProvider);
+                      if (currentName != "Your Mix") {
+                        // Remove the saved mix from Hive via the provider
+                        ref.read(savedMixNotifierProvider.notifier).removeMix(currentName);
+                        // Optionally, clear the current mix state as well.
+                        ref.read(mixProvider.notifier).clearAll();
+                        // Reset the current mix name to default.
+                        ref.read(currentMixNameProvider.notifier).state = "Your Mix";
+                      }
                       Navigator.pop(context);
                     },
                   ),
+
                 ],
               ),
             ),
