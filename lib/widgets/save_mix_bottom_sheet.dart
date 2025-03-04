@@ -5,8 +5,8 @@ import '../providers/saved_mix_provider.dart';
 
 class SaveMixBottomSheet extends ConsumerStatefulWidget {
   final Map<String, double> currentMixItems;
-  final String? initialName; // আগের নাম থাকলে সেটি দেখাবে
-  final bool isRename; // Rename mode active হবে কিনা
+  final String? initialName;
+  final bool isRename;
 
   const SaveMixBottomSheet({
     super.key,
@@ -46,7 +46,7 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
   Widget build(BuildContext context) {
     final savedMixNotifier = ref.read(savedMixNotifierProvider.notifier);
 
-    // Rename হলে আলাদা টাইটেল এবং বাটনের টেক্সট সেট করা
+
     final String title = widget.isRename ? "Rename this mix?" : "Save this mix?";
     final String saveButtonText = widget.isRename ? "Save Changes" : "Save";
 
@@ -102,24 +102,24 @@ class _SaveMixBottomSheetState extends ConsumerState<SaveMixBottomSheet> {
                 ),
                 child: const Text("Cancel", style: TextStyle(color: Colors.white)),
               ),
-              // Save Button
+
               ElevatedButton(
                 onPressed: _isSaveEnabled
                     ? () async {
                   final newName = _nameController.text.trim();
                   if (newName.isNotEmpty) {
-                    // Check if we are in rename mode and the name has changed.
+
                     if (widget.isRename &&
                         widget.initialName != null &&
                         widget.initialName != newName) {
-                      // Remove the old mix record using the old name.
+
                       await ref.read(savedMixNotifierProvider.notifier).removeMix(widget.initialName!);
                     }
-                    // Save or update the mix with the new name.
+
                     await ref.read(savedMixNotifierProvider.notifier).saveMix(newName, widget.currentMixItems);
-                    // Update the current mix name provider.
+
                     ref.read(currentMixNameProvider.notifier).state = newName;
-                    Navigator.pop(context); // Close the bottom sheet
+                    Navigator.pop(context);
                   }
                 }
                     : null,

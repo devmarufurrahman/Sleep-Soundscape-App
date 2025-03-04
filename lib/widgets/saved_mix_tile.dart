@@ -37,17 +37,13 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
           return MixItem(
             name: entry.key,
             value: entry.value,
-            // MixItem now expects a String for icon (asset path)
             icon: assetPath ?? '',
           );
         }).toList();
 
-        // Update mixProvider with new mix items
         ref.read(mixProvider.notifier).setMixItems(newMixItems);
 
-        // Update current mix name provider to show saved mix name
         ref.read(currentMixNameProvider.notifier).state = widget.mix.name;
-
 
         showModalBottomSheet(
           context: context,
@@ -93,7 +89,7 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
               }).toList(),
             ),
             const SizedBox(height: 8),
-            // Mix name text
+
             Text(
               widget.mix.name,
               style: const TextStyle(
@@ -102,7 +98,7 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            // Sound list text
+
             if (soundNames.isNotEmpty) ...[
               const SizedBox(height: 2),
               Text(
@@ -116,7 +112,6 @@ class _SavedMixTileState extends ConsumerState<SavedMixTile> {
               ),
             ],
 
-            // Bottom play/pause button with toggle functionality
             Align(
               alignment: Alignment.bottomRight,
               child: GestureDetector(

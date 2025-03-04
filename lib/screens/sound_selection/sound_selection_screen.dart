@@ -320,7 +320,6 @@ class _SoundSelectionScreenState extends ConsumerState<SoundSelectionScreen> {
                                 tooltip: "Close",
                                 isSelected: selectedFabIndex == 3,
                                 onPressed: () {
-                                  // You can add additional close logic if needed.
                                   setState(() {
                                     selectedFabIndex = 3;
                                     _showFAB = false;

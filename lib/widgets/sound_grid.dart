@@ -59,7 +59,6 @@ class SoundTile extends StatelessWidget {
                 ),
               ),
 
-              // Lock icon
               if (item.isLocked)
                 Positioned(
                   top: 8,

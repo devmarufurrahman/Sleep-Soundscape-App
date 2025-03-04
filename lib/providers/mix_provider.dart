@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../model/mix_item.dart';
-import 'package:flutter/material.dart';
 import 'package:sleep_soundscape_app/core/assets.dart';
 
 class MixNotifier extends StateNotifier<List<MixItem>> {
@@ -39,5 +38,5 @@ final mixProvider = StateNotifierProvider<MixNotifier, List<MixItem>>((ref) {
   return MixNotifier();
 });
 
-// Current mix name (for display in CreateMixBottomSheet)
+// Current mix name
 final currentMixNameProvider = StateProvider<String>((ref) => "Your Mix");

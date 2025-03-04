@@ -19,7 +19,6 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final mixItems = ref.watch(mixProvider);
-    final mixNotifier = ref.read(mixProvider.notifier);
     final currentMixName = ref.watch(currentMixNameProvider);
     final bool isSaved = currentMixName != "Your Mix";
 
@@ -110,11 +109,8 @@ class _CreateMixBottomSheetState extends ConsumerState<CreateMixBottomSheet> {
                     onTap: () {
                       final currentName = ref.read(currentMixNameProvider);
                       if (currentName != "Your Mix") {
-                        // Remove the saved mix from Hive via the provider
                         ref.read(savedMixNotifierProvider.notifier).removeMix(currentName);
-                        // Optionally, clear the current mix state as well.
                         ref.read(mixProvider.notifier).clearAll();
-                        // Reset the current mix name to default.
                         ref.read(currentMixNameProvider.notifier).state = "Your Mix";
                         Navigator.pop(context);
                       }
